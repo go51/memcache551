@@ -6,8 +6,14 @@ import (
 )
 
 func TestLoad(t *testing.T) {
-	m1 := memcache551.Load()
-	m2 := memcache551.Load()
+	config := memcache551.Config{
+		Host:    "localhost:11211",
+		Prefix:  "gorai",
+		Expires: 3600,
+	}
+
+	m1 := memcache551.New(&config)
+	m2 := memcache551.New(&config)
 
 	if m1 == nil {
 		t.Errorf("インスタンス生成に失敗しました。")
@@ -21,8 +27,13 @@ func TestLoad(t *testing.T) {
 }
 
 func BenchmarkLoad(b *testing.B) {
+	config := memcache551.Config{
+		Host:    "localhost:11211",
+		Prefix:  "gorai",
+		Expires: 3600,
+	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = memcache551.Load()
+		_ = memcache551.New(&config)
 	}
 }

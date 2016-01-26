@@ -1,15 +1,17 @@
 package memcache551
 
-type Memcache struct{}
+type Memcache struct {
+	config *Config
+}
 
-var memcacheInstance *Memcache
+type Config struct {
+	Host    string `json:"host"`
+	Prefix  string `json:"prefix"`
+	Expires int32  `json:"expires"`
+}
 
-func Load() *Memcache {
-	if memcacheInstance != nil {
-		return memcacheInstance
+func New(config *Config) *Memcache {
+	return &Memcache{
+		config: config,
 	}
-
-	memcacheInstance = &Memcache{}
-
-	return memcacheInstance
 }
