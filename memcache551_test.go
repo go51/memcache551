@@ -97,3 +97,35 @@ func BenchmarkGet(b *testing.B) {
 	}
 
 }
+
+func TestDelete(t *testing.T) {
+	config := memcache551.Config{
+		Host:    "localhost:11211",
+		Prefix:  "gorai",
+		Expires: 3600,
+	}
+
+	m := memcache551.New(&config, sid)
+	m.Delete("test")
+
+	ret := m.Get("test")
+
+	if ret != nil {
+		t.Errorf("取得に失敗しました。")
+	}
+}
+
+func BenchmarkDelete(b *testing.B) {
+	config := memcache551.Config{
+		Host:    "localhost:11211",
+		Prefix:  "gorai",
+		Expires: 3600,
+	}
+	m := memcache551.New(&config, sid)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		m.Delete("benchmark")
+	}
+
+}

@@ -59,6 +59,11 @@ func (m *Memcache) Get(name string) interface{} {
 	return obj
 }
 
+func (m *Memcache) Delete(name string) {
+	m.client.Delete(generateKey(m.config.Prefix, m.sid, name))
+
+}
+
 func generateKey(prefix, sid, name string) string {
 	hash := md5.New()
 	b := string551.StringToBytes(prefix + ":" + sid + ":" + name)
