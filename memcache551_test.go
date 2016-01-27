@@ -6,13 +6,14 @@ import (
 	"testing"
 )
 
+var sid string = secure551.Hash()
+
 func TestLoad(t *testing.T) {
 	config := memcache551.Config{
 		Host:    "localhost:11211",
 		Prefix:  "gorai",
 		Expires: 3600,
 	}
-	sid := secure551.Hash()
 
 	m1 := memcache551.New(&config, sid)
 	m2 := memcache551.New(&config, sid)
@@ -34,7 +35,6 @@ func BenchmarkLoad(b *testing.B) {
 		Prefix:  "gorai",
 		Expires: 3600,
 	}
-	sid := secure551.Hash()
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -48,7 +48,6 @@ func TestSet(t *testing.T) {
 		Prefix:  "gorai",
 		Expires: 3600,
 	}
-	sid := secure551.Hash()
 
 	m := memcache551.New(&config, sid)
 	m.Set("test", "test_string")
@@ -60,12 +59,41 @@ func BenchmarkSet(b *testing.B) {
 		Prefix:  "gorai",
 		Expires: 3600,
 	}
-	sid := secure551.Hash()
 	m := memcache551.New(&config, sid)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		m.Set("test", "test_string")
+		m.Set("benchmark", "test_string")
+	}
+
+}
+
+func TestGet(t *testing.T) {
+	config := memcache551.Config{
+		Host:    "localhost:11211",
+		Prefix:  "gorai",
+		Expires: 3600,
+	}
+
+	m := memcache551.New(&config, sid)
+	ret := m.Get("test")
+
+	if ret != "test_string" {
+		t.Errorf("取得に失敗しました。")
+	}
+}
+
+func BenchmarkGet(b *testing.B) {
+	config := memcache551.Config{
+		Host:    "localhost:11211",
+		Prefix:  "gorai",
+		Expires: 3600,
+	}
+	m := memcache551.New(&config, sid)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = m.Get("benchmark")
 	}
 
 }
