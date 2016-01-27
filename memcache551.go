@@ -1,8 +1,10 @@
 package memcache551
 
 import (
+	"crypto/md5"
 	"encoding/json"
 	"github.com/bradfitz/gomemcache/memcache"
+	"github.com/go51/string551"
 )
 
 type Memcache struct {
@@ -34,12 +36,33 @@ func (m *Memcache) Set(name string, value interface{}) {
 	}
 
 	err = m.client.Set(&memcache.Item{
-		Key:        m.config.Prefix + ":" + m.sid + ":" + name,
+		Key:        generateKey(m.config.Prefix, m.sid, name),
 		Value:      val,
 		Expiration: m.config.Expires,
 	})
 	if err != nil {
 		panic(err)
 	}
+
+}
+
+func (m *Memcache) Get(name string) interface{} {
+	item, err := m.client.Get(generateKey(m.config.Prefix, m.sid, name))
+	if err != nil {
+		return nil
+	}
+
+	var obj interface{} = nil
+
+	json.Unmarshal(item.Value, &obj)
+
+	return obj
+}
+
+func generateKey(prefix, sid, name string) string {
+	hash := md5.New()
+	b := string551.StringToBytes(prefix + ":" + sid + ":" + name)
+	hash.Write(b)
+	return string551.HexBytesToString(hash.Sum(nil))
 
 }
