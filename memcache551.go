@@ -59,6 +59,16 @@ func (m *Memcache) Get(name string) interface{} {
 	return obj
 }
 
+func (m *Memcache) GetModel(name string, model interface{}) {
+	item, err := m.client.Get(generateKey(m.config.Prefix, m.sid, name))
+	if err != nil {
+		return
+	}
+
+	json.Unmarshal(item.Value, model)
+
+}
+
 func (m *Memcache) Delete(name string) {
 	m.client.Delete(generateKey(m.config.Prefix, m.sid, name))
 
